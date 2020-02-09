@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>chapter01-002ansible-Ad-Hoc使用.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h2 id="%E7%AC%AC%E4%B8%80%E7%AB%A0-ansible-%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7">第一章 ansible 自动化运维工具</h2>
+<h3 id="%E7%AC%AC%E4%BA%8C%E8%8A%82-ansible-ad-hoc-%E4%BD%BF%E7%94%A8">第二节 ansible Ad-Hoc 使用</h3>
+<h4 id="121-centos76-%E4%B8%8B%E4%BD%BF%E7%94%A8-ansible-%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E8%A2%AB%E7%AE%A1%E7%90%86%E4%B8%BB%E6%9C%BA">1.2.1 CentOS7.6 下使用 ansible 远程连接被管理主机 ( * )</h4>
+<pre class="hljs"><code><div>1. 准备两台纯新的 CentOS7.6 服务器，一台安装 ansible ，另一台作为 node1
+
+hostname            ip地址                  用途
+ansible             192.168.7.110           ansible  管理端
+node1               192.168.7.113           node1    远程被管理主机
+
+2. 我们查看一下 ansible 主机和 node1 主机
+
+ansible 主机：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># hostname</span>
+ansible
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># getenforce </span>
+Permissive
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># iptables -vnL</span>
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ip a</span>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:c5:14:0d brd ff:ff:ff:ff:ff:ff
+    inet 192.168.7.110/21 brd 192.168.7.255 scope global noprefixroute dynamic ens33
+       valid_lft 692512sec preferred_lft 692512sec
+    inet6 fe80::ea20:2edb:9518:8002/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible --version</span>
+ansible 2.8.1
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u<span class="hljs-string">'/root/.ansible/plugins/modules'</span>, u<span class="hljs-string">'/usr/share/ansible/plugins/modules'</span>]
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.5 (default, Oct 30 2018, 23:45:53) [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)]
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+node1 主机：
+[root@node1 ~]<span class="hljs-comment"># </span>
+[root@node1 ~]<span class="hljs-comment"># hostname</span>
+node1
+[root@node1 ~]<span class="hljs-comment"># </span>
+[root@node1 ~]<span class="hljs-comment"># getenforce </span>
+Permissive
+[root@node1 ~]<span class="hljs-comment"># </span>
+[root@node1 ~]<span class="hljs-comment"># </span>
+[root@node1 ~]<span class="hljs-comment"># iptables -vnL</span>
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+[root@node1 ~]<span class="hljs-comment"># </span>
+[root@node1 ~]<span class="hljs-comment"># ip a </span>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:a7:db:80 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.7.113/21 brd 192.168.7.255 scope global noprefixroute dynamic ens33
+       valid_lft 692681sec preferred_lft 692681sec
+    inet6 fe80::232b:c256:83db:c7a2/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+[root@node1 ~]<span class="hljs-comment"># </span>
+[root@node1 ~]<span class="hljs-comment">#</span>
+
+
+3. ansible 主机上配置被管理远程服务器信息
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># vi /etc/ansible/hosts </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># cat /etc/ansible/hosts </span>
+[nodes]
+192.168.7.113
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+4. 使用 ansible 命令进行 ping node1 的测试
+
+ansible 命令行使用格式  ansible  被管理主机  选项  -m 模块名称
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m ping </span>
+192.168.7.113 | UNREACHABLE! =&gt; {
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">"Failed to connect to the host via ssh: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password)."</span>, 
+    <span class="hljs-string">"unreachable"</span>: <span class="hljs-literal">true</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+上面的执行过程默认使用的 ssh 秘密验证登录方式，由于我们没有配置，因此 ping 操作失败
+
+
+下面我们使用 -k 选项指明要求输入密码进行登录验证
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -k -m ping </span>
+SSH password: 
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+输入一次密码以后 ansible 会记住密码，以后直接操作即可
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m ping </span>
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+删除 ansible 本地配置信息后，密码失效
+[root@ansible ~]<span class="hljs-comment"># ll</span>
+total 4
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+[root@ansible ~]<span class="hljs-comment"># ll -al</span>
+total 28
+dr-xr-x---.  5 root root  175 Jul 17 15:39 .
+dr-xr-xr-x. 17 root root  224 May  8 20:29 ..
+-rw-------.  1 root root 1368 May  8 20:30 anaconda-ks.cfg
+drwx------.  4 root root   27 Jul 17 15:39 .ansible
+-rw-------.  1 root root  401 Jul 17 15:37 .bash_history
+-rw-r--r--.  1 root root   18 Dec 29  2013 .bash_logout
+-rw-r--r--.  1 root root  176 Dec 29  2013 .bash_profile
+-rw-r--r--.  1 root root  176 Dec 29  2013 .bashrc
+-rw-r--r--.  1 root root  100 Dec 29  2013 .cshrc
+drwxr-----.  3 root root   19 Jul 17 15:23 .pki
+drwx------.  2 root root   25 Jul 17 15:36 .ssh
+-rw-r--r--.  1 root root  129 Dec 29  2013 .tcshrc
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># rm -rf .ansible/</span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m ping </span>
+192.168.7.113 | UNREACHABLE! =&gt; {
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">"Failed to connect to the host via ssh: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password)."</span>, 
+    <span class="hljs-string">"unreachable"</span>: <span class="hljs-literal">true</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+5. 配置免密登录秘钥进行主机访问
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ssh-keygen </span>
+Generating public/private rsa key pair.
+Enter file <span class="hljs-keyword">in</span> <span class="hljs-built_in">which</span> to save the key (/root/.ssh/id_rsa): 
+Enter passphrase (empty <span class="hljs-keyword">for</span> no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved <span class="hljs-keyword">in</span> /root/.ssh/id_rsa.
+Your public key has been saved <span class="hljs-keyword">in</span> /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:vFlHu6YoOeZh2gXTNNlBg80+OsAkre7UJT1NG6KbYdU root@ansible
+The key is randomart image is:
++---[RSA 2048]----+
+|     .   *+      |
+|    . o +oEo     |
+|     = ++=.o.    |
+|    . B++.=. .   |
+|   . ooBSo..o    |
+|    o +oo+ . .   |
+|   o  o.+.  o    |
+|    .+=o . o     |
+|    .ooo. .      |
++----[SHA256]-----+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ssh-copy-id 192.168.7.110</span>
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: <span class="hljs-string">"/root/.ssh/id_rsa.pub"</span>
+The authenticity of host <span class="hljs-string">'192.168.7.110 (192.168.7.110)'</span> can not be established.
+ECDSA key fingerprint is SHA256:Ps0Z0OF7NnjtXewM0cSbKGG/7Y32HvTwiDav6IJc3OI.
+ECDSA key fingerprint is MD5:58:72:28:15:57:f8:68:f8:93:c9:3e:02:24:06:d8:5f.
+Are you sure you want to <span class="hljs-built_in">continue</span> connecting (yes/no)? yes
+/usr/bin/ssh-copy-id: INFO: attempting to <span class="hljs-built_in">log</span> <span class="hljs-keyword">in</span> with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- <span class="hljs-keyword">if</span> you are prompted now it is to install the new keys
+root@192.168.7.110 is password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   <span class="hljs-string">"ssh '192.168.7.110'"</span>
+and check to make sure that only the key(s) you wanted were added.
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ls -al </span>
+total 28
+dr-xr-x---.  5 root root  175 Jul 17 15:44 .
+dr-xr-xr-x. 17 root root  224 May  8 20:29 ..
+-rw-------.  1 root root 1368 May  8 20:30 anaconda-ks.cfg
+drwx------.  4 root root   27 Jul 17 15:44 .ansible
+-rw-------.  1 root root  401 Jul 17 15:37 .bash_history
+-rw-r--r--.  1 root root   18 Dec 29  2013 .bash_logout
+-rw-r--r--.  1 root root  176 Dec 29  2013 .bash_profile
+-rw-r--r--.  1 root root  176 Dec 29  2013 .bashrc
+-rw-r--r--.  1 root root  100 Dec 29  2013 .cshrc
+drwxr-----.  3 root root   19 Jul 17 15:23 .pki
+drwx------.  2 root root   80 Jul 17 15:58 .ssh
+-rw-r--r--.  1 root root  129 Dec 29  2013 .tcshrc
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+拷贝生成好的 .ssh 文件夹到被管理主机 /root 路径下
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># scp </span>
+anaconda-ks.cfg  .bash_history    .bash_profile    .cshrc           .ssh/            
+.ansible/        .bash_logout     .bashrc          .pki/            .tcshrc          
+[root@ansible ~]<span class="hljs-comment"># scp </span>
+anaconda-ks.cfg  .bash_history    .bash_profile    .cshrc           .ssh/            
+.ansible/        .bash_logout     .bashrc          .pki/            .tcshrc          
+[root@ansible ~]<span class="hljs-comment"># scp -rp .ssh 192.168.7.113:/root/</span>
+root@192.168.7.113 is password: 
+known_hosts                                                                       100%  350   122.8KB/s   00:00    
+id_rsa                                                                            100% 1679     1.4MB/s   00:00    
+id_rsa.pub                                                                        100%  394   396.8KB/s   00:00    
+authorized_keys                                                                   100%  394   396.1KB/s   00:00    
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+验证免密 ssh 远程登陆
+[root@ansible ~]<span class="hljs-comment"># ssh 192.168.7.113</span>
+Last login: Wed Jul 17 15:39:18 2019 from 192.168.7.110
+[root@node1 ~]<span class="hljs-comment">#  </span>
+[root@node1 ~]<span class="hljs-comment"># exit</span>
+<span class="hljs-built_in">logout</span>
+Connection to 192.168.7.113 closed.
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+测试 ansible 访问 node1 主机
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m ping </span>
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+</div></code></pre>
+<h4 id="122-centos76-%E4%B8%8B-ansible-%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97%E4%BB%8B%E7%BB%8D">1.2.2 CentOS7.6 下 ansible 常用模块介绍 ( * )</h4>
+<pre class="hljs"><code><div>1. 使用 ansible-doc 命令查看指定模块的帮助信息
+[root@ansible ~]<span class="hljs-comment"># ansible-doc ping</span>
+
+使用 ansible-doc -s 可以查看简略的帮助信息
+[root@ansible ~]<span class="hljs-comment"># ansible-doc -s ping</span>
+- name: Try to connect to host, verify a usable python and <span class="hljs-built_in">return</span> pong  on success
+  ping:
+      data:                  <span class="hljs-comment"># Data to return for the ping  return value. If this parameter is set to crash, the</span>
+                               module will cause an exception.
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+
+2. 使用 ansible-doc --list 可以查看所有支持的 ansible 模块
+
+
+
+3. setup 模块使用
+setup 模块可以获取被管理主机的系统信息和变量
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m  setup</span>
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"ansible_all_ipv4_addresses"</span>: [
+            <span class="hljs-string">"192.168.7.113"</span>
+        ], 
+        <span class="hljs-string">"ansible_all_ipv6_addresses"</span>: [
+            <span class="hljs-string">"fe80::232b:c256:83db:c7a2"</span>
+        ], 
+        .
+        .
+        .省略部分输出信息.....
+        . 
+        <span class="hljs-string">"module_setup"</span>: <span class="hljs-literal">true</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+由于默认获取全部信息，我们可以使用 filter 进行过滤显示指定信息：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m setup -a 'filter=ansible_*_mb'</span>
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"ansible_memfree_mb"</span>: 137, 
+        <span class="hljs-string">"ansible_memory_mb"</span>: {
+            <span class="hljs-string">"nocache"</span>: {
+                <span class="hljs-string">"free"</span>: 296, 
+                <span class="hljs-string">"used"</span>: 172
+            }, 
+            <span class="hljs-string">"real"</span>: {
+                <span class="hljs-string">"free"</span>: 137, 
+                <span class="hljs-string">"total"</span>: 468, 
+                <span class="hljs-string">"used"</span>: 331
+            }, 
+            <span class="hljs-string">"swap"</span>: {
+                <span class="hljs-string">"cached"</span>: 0, 
+                <span class="hljs-string">"free"</span>: 4095, 
+                <span class="hljs-string">"total"</span>: 4095, 
+                <span class="hljs-string">"used"</span>: 0
+            }
+        }, 
+        <span class="hljs-string">"ansible_memtotal_mb"</span>: 468, 
+        <span class="hljs-string">"ansible_swapfree_mb"</span>: 4095, 
+        <span class="hljs-string">"ansible_swaptotal_mb"</span>: 4095, 
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+或者我们指定要获取的具体信息名称：
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m setup -a 'gather_subset=network'</span>
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"ansible_all_ipv4_addresses"</span>: [
+            <span class="hljs-string">"192.168.7.113"</span>
+        ], 
+        <span class="hljs-string">"ansible_all_ipv6_addresses"</span>: [
+            <span class="hljs-string">"fe80::232b:c256:83db:c7a2"</span>
+        ], 
+        <span class="hljs-string">"ansible_apparmor"</span>: {
+            <span class="hljs-string">"status"</span>: <span class="hljs-string">"disabled"</span>
+        }, 
+        <span class="hljs-string">"ansible_architecture"</span>: <span class="hljs-string">"x86_64"</span>, 
+         .
+         .省略部分输出信息.....
+         .
+        <span class="hljs-string">"ansible_system_capabilities_enforced"</span>: <span class="hljs-string">"True"</span>, 
+        <span class="hljs-string">"ansible_user_dir"</span>: <span class="hljs-string">"/root"</span>, 
+        <span class="hljs-string">"ansible_user_gecos"</span>: <span class="hljs-string">"root"</span>, 
+        <span class="hljs-string">"ansible_user_gid"</span>: 0, 
+        <span class="hljs-string">"ansible_user_id"</span>: <span class="hljs-string">"root"</span>, 
+        <span class="hljs-string">"ansible_user_shell"</span>: <span class="hljs-string">"/bin/bash"</span>, 
+        <span class="hljs-string">"ansible_user_uid"</span>: 0, 
+        <span class="hljs-string">"ansible_userspace_architecture"</span>: <span class="hljs-string">"x86_64"</span>, 
+        <span class="hljs-string">"ansible_userspace_bits"</span>: <span class="hljs-string">"64"</span>, 
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>, 
+        <span class="hljs-string">"gather_subset"</span>: [
+            <span class="hljs-string">"network"</span>
+        ], 
+        <span class="hljs-string">"module_setup"</span>: <span class="hljs-literal">true</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+
+4. <span class="hljs-built_in">command</span> 模块
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible-doc -s command</span>
+- name: Execute commands on targets
+  <span class="hljs-built_in">command</span>:
+      argv:                  <span class="hljs-comment"># Passes the command as a list rather than a string. Use `argv' to avoid quoting</span>
+                               values that would otherwise be interpreted
+                               incorrectly (<span class="hljs-keyword">for</span> example <span class="hljs-string">"user name"</span>). Only the
+                               string or the list form can be provided, not both.
+                               One or the other must be provided.
+      <span class="hljs-built_in">chdir</span>:                 <span class="hljs-comment"># Change into this directory before running the command.</span>
+      creates:               <span class="hljs-comment"># A filename or (since 2.0) glob pattern. If it already exists, this step *won't* be</span>
+                               run.
+      free_form:             <span class="hljs-comment"># (required) The command module takes a free form command to run. There is no actual</span>
+                               parameter named <span class="hljs-string">'free form'</span>. See the examples on how
+                               to use this module.
+      removes:               <span class="hljs-comment"># A filename or (since 2.0) glob pattern. If it already exists, this step *will* be</span>
+                               run.
+      stdin:                 <span class="hljs-comment"># Set the stdin of the command directly to the specified value.</span>
+      stdin_add_newline:     <span class="hljs-comment"># If set to `yes', append a newline to stdin data.</span>
+      strip_empty_ends:      <span class="hljs-comment"># Strip empty lines from the end of stdout/stderr in result.</span>
+      warn:                  <span class="hljs-comment"># Enable or disable task warnings.</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m command -a 'ip a'</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:a7:db:80 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.7.113/21 brd 192.168.7.255 scope global noprefixroute dynamic ens33
+       valid_lft 688728sec preferred_lft 688728sec
+    inet6 fe80::232b:c256:83db:c7a2/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+<span class="hljs-built_in">command</span> 命令并非使用 shell 执行，因此变量 和 shell 的特殊符号无法使用
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m command -a 'ip a &gt; ipinfo.txt'</span>
+192.168.7.113 | FAILED | rc=255 &gt;&gt;
+Command <span class="hljs-string">"&gt;"</span> is unknown, try <span class="hljs-string">"ip address help"</span>.non-zero <span class="hljs-built_in">return</span> code
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+
+5. shell 模块
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible-doc -s shell</span>
+- name: Execute shell commands on targets
+  shell:
+      <span class="hljs-built_in">chdir</span>:                 <span class="hljs-comment"># Change into this directory before running the command.</span>
+      creates:               <span class="hljs-comment"># A filename, when it already exists, this step will *not* be run.</span>
+      executable:            <span class="hljs-comment"># Change the shell used to execute the command. This expects an absolute path to the</span>
+                               executable.
+      free_form:             <span class="hljs-comment"># (required) The shell module takes a free form command to run, as a string. There is</span>
+                               no actual parameter named <span class="hljs-string">'free form'</span>. See the
+                               examples on how to use this module.
+      removes:               <span class="hljs-comment"># A filename, when it does not exist, this step will *not* be run.</span>
+      stdin:                 <span class="hljs-comment"># Set the stdin of the command directly to the specified value.</span>
+      stdin_add_newline:     <span class="hljs-comment"># Whether to append a newline to stdin data.</span>
+      warn:                  <span class="hljs-comment"># Whether to enable task warnings.</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+该模块将在远程主机上使用 /bin/sh 执行命令
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m shell -a 'ip a &gt; ipinfo.txt'</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m shell -a 'cat ipinfo.txt'</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:a7:db:80 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.7.113/21 brd 192.168.7.255 scope global noprefixroute dynamic ens33
+       valid_lft 685573sec preferred_lft 685573sec
+    inet6 fe80::232b:c256:83db:c7a2/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+6. script 模块
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible-doc -s script</span>
+- name: Runs a <span class="hljs-built_in">local</span> script on a remote node after transferring it
+  script:
+      <span class="hljs-built_in">chdir</span>:                 <span class="hljs-comment"># Change into this directory on the remote node before running the script.</span>
+      creates:               <span class="hljs-comment"># A filename on the remote node, when it already exists, this step will *not* be run.</span>
+      decrypt:               <span class="hljs-comment"># This option controls the autodecryption of source files using vault.</span>
+      executable:            <span class="hljs-comment"># Name or path of a executable to invoke the script with.</span>
+      free_form:             <span class="hljs-comment"># (required) Path to the local script file followed by optional arguments. There is no</span>
+                               parameter actually named <span class="hljs-string">'free form'</span>, see the
+                               examples!
+      removes:               <span class="hljs-comment"># A filename on the remote node, when it does not exist, this step will *not* be run.</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># vi shellscript.sh</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># cat shellscript.sh </span>
+<span class="hljs-meta">#!/bin/bash
+</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"node1 /root/shellscript.sh"</span>
+
+<span class="hljs-built_in">echo</span> `hostname`
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># bash shellscript.sh </span>
+node1 /root/shellscript.sh
+ansible
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+script 模块可以将本地脚本在远程服务器上执行
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m script -a shellscript.sh </span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"rc"</span>: 0, 
+    <span class="hljs-string">"stderr"</span>: <span class="hljs-string">"Shared connection to 192.168.7.113 closed.\r\n"</span>, 
+    <span class="hljs-string">"stderr_lines"</span>: [
+        <span class="hljs-string">"Shared connection to 192.168.7.113 closed."</span>
+    ], 
+    <span class="hljs-string">"stdout"</span>: <span class="hljs-string">"node1 /root/shellscript.sh\r\nnode1\r\n"</span>, 
+    <span class="hljs-string">"stdout_lines"</span>: [
+        <span class="hljs-string">"node1 /root/shellscript.sh"</span>, 
+        <span class="hljs-string">"node1"</span>
+    ]
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+
+7. copy 模块
+使用 copy 模块拷贝本地文件到远程服务器
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m copy -a "src=/root/shellscript.sh dest=/root/shells.sh"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"checksum"</span>: <span class="hljs-string">"47eeaf57134572c8ed5dc0c8f90b784248bd7e3a"</span>, 
+    <span class="hljs-string">"dest"</span>: <span class="hljs-string">"/root/shells.sh"</span>, 
+    <span class="hljs-string">"gid"</span>: 0, 
+    <span class="hljs-string">"group"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"md5sum"</span>: <span class="hljs-string">"299e3a687252f3020cef20d0da880d2e"</span>, 
+    <span class="hljs-string">"mode"</span>: <span class="hljs-string">"0644"</span>, 
+    <span class="hljs-string">"owner"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"secontext"</span>: <span class="hljs-string">"system_u:object_r:admin_home_t:s0"</span>, 
+    <span class="hljs-string">"size"</span>: 65, 
+    <span class="hljs-string">"src"</span>: <span class="hljs-string">"/root/.ansible/tmp/ansible-tmp-1563356659.95-276873457526060/source"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"file"</span>, 
+    <span class="hljs-string">"uid"</span>: 0
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ls"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+anaconda-ks.cfg
+shells.sh
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+8. fetch 模块
+[root@ansible ~]<span class="hljs-comment"># ansible-doc -s fetch</span>
+- name: Fetch files from remote nodes
+  fetch:
+      dest:                  <span class="hljs-comment"># (required) A directory to save the file into. For example, if the `dest' directory</span>
+                               is /backup<span class="hljs-string">' a src'</span> file named /etc/profile on
+                               host host.example.com, would be saved into
+                               /backup/host.example.com/etc/profile. The host name
+                               is based on the inventory name.
+      fail_on_missing:       <span class="hljs-comment"># When set to yes , the task will fail if the remote file cannot be read for any</span>
+                               reason. Prior to Ansible 2.5, setting this would only
+                               fail <span class="hljs-keyword">if</span> the <span class="hljs-built_in">source</span> file was missing. The default was
+                               changed to  yes  <span class="hljs-keyword">in</span> Ansible 2.5.
+      flat:                  <span class="hljs-comment"># Allows you to override the default behavior of appending hostname/path/to/file to</span>
+                               the destination. If  dest  ends with <span class="hljs-string">'/'</span>, it will use
+                               the basename of the <span class="hljs-built_in">source</span> file, similar to the copy
+                               module. Obviously this is only handy <span class="hljs-keyword">if</span> the filenames
+                               are unique.
+      src:                   <span class="hljs-comment"># (required) The file on the remote system to fetch. This `must' be a file, not a</span>
+                               directory. Recursive fetching may be supported <span class="hljs-keyword">in</span> a
+                               later release.
+      validate_checksum:     <span class="hljs-comment"># Verify that the source and destination checksums match after the files are fetched.</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+fetch 模块可以将远程服务器的文件复制到本地 ansible 主机中
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ls"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+anaconda-ks.cfg
+shells.sh
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m fetch -a "src=/root/shells.sh dest=/root/newshells.sh"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"checksum"</span>: <span class="hljs-string">"47eeaf57134572c8ed5dc0c8f90b784248bd7e3a"</span>, 
+    <span class="hljs-string">"dest"</span>: <span class="hljs-string">"/root/newshells.sh/192.168.7.113/root/shells.sh"</span>, 
+    <span class="hljs-string">"md5sum"</span>: <span class="hljs-string">"299e3a687252f3020cef20d0da880d2e"</span>, 
+    <span class="hljs-string">"remote_checksum"</span>: <span class="hljs-string">"47eeaf57134572c8ed5dc0c8f90b784248bd7e3a"</span>, 
+    <span class="hljs-string">"remote_md5sum"</span>: null
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ll</span>
+total 8
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+drwxr-xr-x. 3 root root   27 Jul 17 17:48 newshells.sh
+-rw-r--r--. 1 root root   65 Jul 17 17:36 shellscript.sh
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+9. file 模块
+管理远程主机上的文件属性和软硬连接功能
+
+修改文件属性
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ls -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+total 8
+-rw-------. 1 root root 1368 Jun 16 14:32 anaconda-ks.cfg
+---x--x--x. 1 root root   65 Jul 17 17:44 shells.sh
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m file -a "path=/root/shells.sh mode=777"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"gid"</span>: 0, 
+    <span class="hljs-string">"group"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"mode"</span>: <span class="hljs-string">"0777"</span>, 
+    <span class="hljs-string">"owner"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"path"</span>: <span class="hljs-string">"/root/shells.sh"</span>, 
+    <span class="hljs-string">"secontext"</span>: <span class="hljs-string">"system_u:object_r:admin_home_t:s0"</span>, 
+    <span class="hljs-string">"size"</span>: 65, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"file"</span>, 
+    <span class="hljs-string">"uid"</span>: 0
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+创建软连接
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m file -a "src=/root/shells.sh dest=/root/filelink state=link"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"dest"</span>: <span class="hljs-string">"/root/filelink"</span>, 
+    <span class="hljs-string">"gid"</span>: 0, 
+    <span class="hljs-string">"group"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"mode"</span>: <span class="hljs-string">"0777"</span>, 
+    <span class="hljs-string">"owner"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"secontext"</span>: <span class="hljs-string">"unconfined_u:object_r:admin_home_t:s0"</span>, 
+    <span class="hljs-string">"size"</span>: 15, 
+    <span class="hljs-string">"src"</span>: <span class="hljs-string">"/root/shells.sh"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"link"</span>, 
+    <span class="hljs-string">"uid"</span>: 0
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ls -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+total 8
+-rw-------. 1 root root 1368 Jun 16 14:32 anaconda-ks.cfg
+lrwxrwxrwx. 1 root root   15 Jul 17 17:56 filelink -&gt; /root/shells.sh
+-rwxrwxrwx. 1 root root   65 Jul 17 17:44 shells.sh
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+10. archive 模块
+archive 可以完成打包压缩功能
+[root@ansible ~]<span class="hljs-comment"># ansible all -m archive -a "path=/etc/yum.repos.d dest=/root/yum.tar.gz format=gz mode=0777"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"archived"</span>: [
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-Base.repo"</span>, 
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-CR.repo"</span>, 
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-Debuginfo.repo"</span>, 
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-Media.repo"</span>, 
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-Sources.repo"</span>, 
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-Vault.repo"</span>, 
+        <span class="hljs-string">"/etc/yum.repos.d/CentOS-fasttrack.repo"</span>
+    ], 
+    <span class="hljs-string">"arcroot"</span>: <span class="hljs-string">"/etc/"</span>, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"dest"</span>: <span class="hljs-string">"/root/yum.tar.gz"</span>, 
+    <span class="hljs-string">"expanded_exclude_paths"</span>: [], 
+    <span class="hljs-string">"expanded_paths"</span>: [
+        <span class="hljs-string">"/etc/yum.repos.d"</span>
+    ], 
+    <span class="hljs-string">"gid"</span>: 0, 
+    <span class="hljs-string">"group"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"missing"</span>: [], 
+    <span class="hljs-string">"mode"</span>: <span class="hljs-string">"0777"</span>, 
+    <span class="hljs-string">"owner"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"secontext"</span>: <span class="hljs-string">"unconfined_u:object_r:admin_home_t:s0"</span>, 
+    <span class="hljs-string">"size"</span>: 2354, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"file"</span>, 
+    <span class="hljs-string">"uid"</span>: 0
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -a "ls -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+total 12
+-rw-------. 1 root root 1368 Jun 16 14:32 anaconda-ks.cfg
+lrwxrwxrwx. 1 root root   15 Jul 17 17:56 filelink -&gt; /root/shells.sh
+-rwxrwxrwx. 1 root root   65 Jul 17 17:44 shells.sh
+-rwxrwxrwx. 1 root root 2354 Jul 17 19:46 yum.tar.gz
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+
+
+11. unarchive 模块
+解压文件模块 
+
+当选项中的 copy 为 yes 时 将解压 ansible 服务器端的压缩包到远程服务器上
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ll</span>
+total 8
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+drwxr-xr-x. 3 root root   27 Jul 17 17:48 newshells.sh
+-rw-r--r--. 1 root root   65 Jul 17 17:36 shellscript.sh
+[root@ansible ~]<span class="hljs-comment"># tar czvf file.tar.gz anaconda-ks.cfg </span>
+anaconda-ks.cfg
+[root@ansible ~]<span class="hljs-comment"># ll</span>
+total 12
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+-rw-r--r--. 1 root root  845 Jul 17 19:49 file.tar.gz
+drwxr-xr-x. 3 root root   27 Jul 17 17:48 newshells.sh
+-rw-r--r--. 1 root root   65 Jul 17 17:36 shellscript.sh
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># echo "www.magedu.com" &gt; index.html</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># tar czvf code.tar.gz index.html </span>
+index.html
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ll</span>
+total 16
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+-rw-r--r--. 1 root root  138 Jul 17 19:55 code.tar.gz
+-rw-r--r--. 1 root root   15 Jul 17 19:55 index.html
+drwxr-xr-x. 3 root root   27 Jul 17 17:48 newshells.sh
+-rw-r--r--. 1 root root   65 Jul 17 17:36 shellscript.sh
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -m unarchive -a "src=/root/code.tar.gz copy=yes dest=/root"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"dest"</span>: <span class="hljs-string">"/root"</span>, 
+    <span class="hljs-string">"extract_results"</span>: {
+        <span class="hljs-string">"cmd"</span>: [
+            <span class="hljs-string">"/usr/bin/gtar"</span>, 
+            <span class="hljs-string">"--extract"</span>, 
+            <span class="hljs-string">"-C"</span>, 
+            <span class="hljs-string">"/root"</span>, 
+            <span class="hljs-string">"-z"</span>, 
+            <span class="hljs-string">"-f"</span>, 
+            <span class="hljs-string">"/root/.ansible/tmp/ansible-tmp-1563364600.86-262215652491407/source"</span>
+        ], 
+        <span class="hljs-string">"err"</span>: <span class="hljs-string">""</span>, 
+        <span class="hljs-string">"out"</span>: <span class="hljs-string">""</span>, 
+        <span class="hljs-string">"rc"</span>: 0
+    }, 
+    <span class="hljs-string">"gid"</span>: 0, 
+    <span class="hljs-string">"group"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"handler"</span>: <span class="hljs-string">"TgzArchive"</span>, 
+    <span class="hljs-string">"mode"</span>: <span class="hljs-string">"0550"</span>, 
+    <span class="hljs-string">"owner"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"secontext"</span>: <span class="hljs-string">"system_u:object_r:admin_home_t:s0"</span>, 
+    <span class="hljs-string">"size"</span>: 232, 
+    <span class="hljs-string">"src"</span>: <span class="hljs-string">"/root/.ansible/tmp/ansible-tmp-1563364600.86-262215652491407/source"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"directory"</span>, 
+    <span class="hljs-string">"uid"</span>: 0
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -a "ls -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+total 16
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+lrwxrwxrwx. 1 root root   15 Jul 17 17:56 filelink -&gt; /root/shells.sh
+-rw-r--r--. 1 root root   15 Jul 17 19:55 index.html
+-rwxrwxrwx. 1 root root   65 Jul 17 17:44 shells.sh
+-rwxrwxrwx. 1 root root 2354 Jul 17 19:46 yum.tar.gz
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+当 copy 为 no 时，将解压远程主机上的压缩包到远程主机指定路径下
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -a "ls -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+total 16
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+lrwxrwxrwx. 1 root root   15 Jul 17 17:56 filelink -&gt; /root/shells.sh
+-rw-r--r--. 1 root root   15 Jul 17 19:55 index.html
+-rwxrwxrwx. 1 root root   65 Jul 17 17:44 shells.sh
+-rwxrwxrwx. 1 root root 2354 Jul 17 19:46 yum.tar.gz
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -m unarchive -a "src=/root/yum.tar.gz copy=no dest=/root"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"dest"</span>: <span class="hljs-string">"/root"</span>, 
+    <span class="hljs-string">"extract_results"</span>: {
+        <span class="hljs-string">"cmd"</span>: [
+            <span class="hljs-string">"/usr/bin/gtar"</span>, 
+            <span class="hljs-string">"--extract"</span>, 
+            <span class="hljs-string">"-C"</span>, 
+            <span class="hljs-string">"/root"</span>, 
+            <span class="hljs-string">"-z"</span>, 
+            <span class="hljs-string">"-f"</span>, 
+            <span class="hljs-string">"/root/yum.tar.gz"</span>
+        ], 
+        <span class="hljs-string">"err"</span>: <span class="hljs-string">""</span>, 
+        <span class="hljs-string">"out"</span>: <span class="hljs-string">""</span>, 
+        <span class="hljs-string">"rc"</span>: 0
+    }, 
+    <span class="hljs-string">"gid"</span>: 0, 
+    <span class="hljs-string">"group"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"handler"</span>: <span class="hljs-string">"TgzArchive"</span>, 
+    <span class="hljs-string">"mode"</span>: <span class="hljs-string">"0550"</span>, 
+    <span class="hljs-string">"owner"</span>: <span class="hljs-string">"root"</span>, 
+    <span class="hljs-string">"secontext"</span>: <span class="hljs-string">"system_u:object_r:admin_home_t:s0"</span>, 
+    <span class="hljs-string">"size"</span>: 251, 
+    <span class="hljs-string">"src"</span>: <span class="hljs-string">"/root/yum.tar.gz"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"directory"</span>, 
+    <span class="hljs-string">"uid"</span>: 0
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -a "ls -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+total 16
+-rw-------. 1 root root 1368 May  8 20:30 anaconda-ks.cfg
+lrwxrwxrwx. 1 root root   15 Jul 17 17:56 filelink -&gt; /root/shells.sh
+-rw-r--r--. 1 root root   15 Jul 17 19:55 index.html
+-rwxrwxrwx. 1 root root   65 Jul 17 17:44 shells.sh
+drwxr-xr-x. 2 root root  187 Jul 17 20:07 yum.repos.d
+-rwxrwxrwx. 1 root root 2354 Jul 17 19:46 yum.tar.gz
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+12. hostname 模块
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible-doc -s hostname</span>
+- name: Manage hostname
+  hostname:
+      name:                  <span class="hljs-comment"># (required) Name of the host</span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+用于修改远程主机名
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m hostname -a "name=node01"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"ansible_domain"</span>: <span class="hljs-string">""</span>, 
+        <span class="hljs-string">"ansible_fqdn"</span>: <span class="hljs-string">"node01"</span>, 
+        <span class="hljs-string">"ansible_hostname"</span>: <span class="hljs-string">"node01"</span>, 
+        <span class="hljs-string">"ansible_nodename"</span>: <span class="hljs-string">"node01"</span>, 
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"node01"</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "hostname"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+node01
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+13. cron 模块
+用于设置远程主机计划任务功能
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m cron -a "minute=*/2 job='/usr/bin/date &gt;&gt; /root/time.txt' name=crontest"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"envs"</span>: [], 
+    <span class="hljs-string">"jobs"</span>: [
+        <span class="hljs-string">"crontest"</span>
+    ]
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ls -al time.txt"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+-rw-r--r--. 1 root root 58 Jul 17 20:22 time.txt
+
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "crontab -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+<span class="hljs-comment">#Ansible: crontest</span>
+*/2 * * * * /usr/bin/date &gt;&gt; /root/time.txt
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+删除一个远程主机的计划任务
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m cron -a "name=crontest state=absent"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"envs"</span>: [], 
+    <span class="hljs-string">"jobs"</span>: []
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "crontab -l"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+14. yum 模块
+通过配置 state 定义安装或者删除指定的软件
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m yum -a "name=httpd state=present"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"changes"</span>: {
+        <span class="hljs-string">"installed"</span>: [
+            <span class="hljs-string">"httpd"</span>
+        ]
+    }, 
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">""</span>, 
+    <span class="hljs-string">"rc"</span>: 0, 
+    <span class="hljs-string">"results"</span>: [
+        <span class="hljs-string">"Loaded plugins: fastestmirror\nLoading mirror speeds from cached hostfile\n * base: mirrors.aliyun.com\n * extras: mirrors.tuna.tsinghua.edu.cn\n * updates: mirrors.tuna.tsinghua.edu.cn\nResolving Dependencies\n--&gt; Running transaction check\n---&gt; Package httpd.x86_64 0:2.4.6-89.el7.centos will be installed\n--&gt; Processing Dependency: httpd-tools = 2.4.6-89.el7.centos for package: httpd-2.4.6-89.el7.centos.x86_64\n--&gt; Processing Dependency: /etc/mime.types for package: httpd-2.4.6-89.el7.centos.x86_64\n--&gt; Processing Dependency: libaprutil-1.so.0()(64bit) for package: httpd-2.4.6-89.el7.centos.x86_64\n--&gt; Processing Dependency: libapr-1.so.0()(64bit) for package: httpd-2.4.6-89.el7.centos.x86_64\n--&gt; Running transaction check\n---&gt; Package apr.x86_64 0:1.4.8-3.el7_4.1 will be installed\n---&gt; Package apr-util.x86_64 0:1.5.2-6.el7 will be installed\n---&gt; Package httpd-tools.x86_64 0:2.4.6-89.el7.centos will be installed\n---&gt; Package mailcap.noarch 0:2.1.41-2.el7 will be installed\n--&gt; Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package           Arch         Version                     Repository     Size\n================================================================================\nInstalling:\n httpd             x86_64       2.4.6-89.el7.centos         updates       2.7 M\nInstalling for dependencies:\n apr               x86_64       1.4.8-3.el7_4.1             base          103 k\n apr-util          x86_64       1.5.2-6.el7                 base           92 k\n httpd-tools       x86_64       2.4.6-89.el7.centos         updates        90 k\n mailcap           noarch       2.1.41-2.el7                base           31 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package (+4 Dependent packages)\n\nTotal download size: 3.0 M\nInstalled size: 10 M\nDownloading packages:\n--------------------------------------------------------------------------------\nTotal                                              888 kB/s | 3.0 MB  00:03     \nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : apr-1.4.8-3.el7_4.1.x86_64                                   1/5 \n  Installing : apr-util-1.5.2-6.el7.x86_64                                  2/5 \n  Installing : httpd-tools-2.4.6-89.el7.centos.x86_64                       3/5 \n  Installing : mailcap-2.1.41-2.el7.noarch                                  4/5 \n  Installing : httpd-2.4.6-89.el7.centos.x86_64                             5/5 \n  Verifying  : httpd-tools-2.4.6-89.el7.centos.x86_64                       1/5 \n  Verifying  : mailcap-2.1.41-2.el7.noarch                                  2/5 \n  Verifying  : httpd-2.4.6-89.el7.centos.x86_64                             3/5 \n  Verifying  : apr-1.4.8-3.el7_4.1.x86_64                                   4/5 \n  Verifying  : apr-util-1.5.2-6.el7.x86_64                                  5/5 \n\nInstalled:\n  httpd.x86_64 0:2.4.6-89.el7.centos                                            \n\nDependency Installed:\n  apr.x86_64 0:1.4.8-3.el7_4.1                 apr-util.x86_64 0:1.5.2-6.el7    \n  httpd-tools.x86_64 0:2.4.6-89.el7.centos     mailcap.noarch 0:2.1.41-2.el7    \n\nComplete!\n"</span>
+    ]
+}
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+卸载刚安装的 httpd：
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m yum -a "name=httpd state=absent"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"changes"</span>: {
+        <span class="hljs-string">"removed"</span>: [
+            <span class="hljs-string">"httpd"</span>
+        ]
+    }, 
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">""</span>, 
+    <span class="hljs-string">"rc"</span>: 0, 
+    <span class="hljs-string">"results"</span>: [
+        <span class="hljs-string">"Loaded plugins: fastestmirror\nResolving Dependencies\n--&gt; Running transaction check\n---&gt; Package httpd.x86_64 0:2.4.6-89.el7.centos will be erased\n--&gt; Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package      Arch          Version                       Repository       Size\n================================================================================\nRemoving:\n httpd        x86_64        2.4.6-89.el7.centos           @updates        9.4 M\n\nTransaction Summary\n================================================================================\nRemove  1 Package\n\nInstalled size: 9.4 M\nDownloading packages:\nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Erasing    : httpd-2.4.6-89.el7.centos.x86_64                             1/1 \n  Verifying  : httpd-2.4.6-89.el7.centos.x86_64                             1/1 \n\nRemoved:\n  httpd.x86_64 0:2.4.6-89.el7.centos                                            \n\nComplete!\n"</span>
+    ]
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+15. service 模块
+管理服务的启动和关闭
+
+先安装一个 httpd
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m yum -a "name=httpd state=present"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"changes"</span>: {
+        <span class="hljs-string">"installed"</span>: [
+            <span class="hljs-string">"httpd"</span>
+        ]
+    }, 
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">""</span>, 
+    <span class="hljs-string">"rc"</span>: 0, 
+    <span class="hljs-string">"results"</span>: [
+     .
+     .省略部分输出信息.....
+     .
+     Complete!
+    ]
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+查看端口：
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ss -ntl"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              
+LISTEN     0      128          *:22                       *:*                  
+LISTEN     0      100    127.0.0.1:25                       *:*                  
+LISTEN     0      128         :::22                      :::*                  
+LISTEN     0      100        ::1:25                      :::*                  
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+启动服务：
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m service -a "name=httpd enabled=yes state=started"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"enabled"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"httpd"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"started"</span>, 
+    <span class="hljs-string">"status"</span>: {
+        .
+        .省略部分输出信息.....
+        . 
+        <span class="hljs-string">"WatchdogUSec"</span>: <span class="hljs-string">"0"</span>
+    }
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+检查端口：
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "ss -ntl"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              
+LISTEN     0      128          *:22                       *:*                  
+LISTEN     0      100    127.0.0.1:25                       *:*                  
+LISTEN     0      128         :::80                      :::*                  
+LISTEN     0      128         :::22                      :::*                  
+LISTEN     0      100        ::1:25                      :::*                  
+
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+重启服务：
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m service -a "name=httpd  state=restarted"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"httpd"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"started"</span>, 
+    <span class="hljs-string">"status"</span>: {
+        .
+        .省略部分输出信息.....
+        .
+        <span class="hljs-string">"WatchdogTimestampMonotonic"</span>: <span class="hljs-string">"0"</span>, 
+        <span class="hljs-string">"WatchdogUSec"</span>: <span class="hljs-string">"0"</span>
+    }
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+关闭服务：
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m service -a "name=httpd  state=stopped"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"httpd"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"stopped"</span>, 
+    <span class="hljs-string">"status"</span>: {
+        .
+        .省略部分输出信息....
+        .
+        <span class="hljs-string">"WatchdogTimestampMonotonic"</span>: <span class="hljs-string">"18903509897"</span>, 
+        <span class="hljs-string">"WatchdogUSec"</span>: <span class="hljs-string">"0"</span>
+    }
+}
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+
+
+
+16. user 模块
+用于管理远程主机的操作系统用户功能
+创建用户：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m user -a "name=magedu system=yes "</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"comment"</span>: <span class="hljs-string">""</span>, 
+    <span class="hljs-string">"create_home"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"group"</span>: 996, 
+    <span class="hljs-string">"home"</span>: <span class="hljs-string">"/home/magedu"</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"magedu"</span>, 
+    <span class="hljs-string">"shell"</span>: <span class="hljs-string">"/bin/bash"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"present"</span>, 
+    <span class="hljs-string">"system"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"uid"</span>: 998
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#  </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "id magedu"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+uid=998(magedu) gid=996(magedu) groups=996(magedu)
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+删除用户：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m user -a "name=magedu system=yes state=absent remove=yes"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"force"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"magedu"</span>, 
+    <span class="hljs-string">"remove"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"absent"</span>, 
+    <span class="hljs-string">"stderr"</span>: <span class="hljs-string">"userdel: magedu mail spool (/var/spool/mail/magedu) not found\n"</span>, 
+    <span class="hljs-string">"stderr_lines"</span>: [
+        <span class="hljs-string">"userdel: magedu mail spool (/var/spool/mail/magedu) not found"</span>
+    ]
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "id magedu"</span>
+192.168.7.113 | FAILED | rc=1 &gt;&gt;
+id: magedu: no such usernon-zero <span class="hljs-built_in">return</span> code
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+
+
+
+17. group 模块
+管理远程主机操作系统用户组功能
+创建 magedu 组：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m group -a "name=magedu system=yes"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"gid"</span>: 996, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"magedu"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"present"</span>, 
+    <span class="hljs-string">"system"</span>: <span class="hljs-literal">true</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "tail /etc/group"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+systemd-journal:x:190:
+systemd-network:x:192:
+dbus:x:81:
+polkitd:x:998:
+ssh_keys:x:997:
+sshd:x:74:
+postdrop:x:90:
+postfix:x:89:
+apache:x:48:
+magedu:x:996:
+
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+删除 magedu 组：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -m group -a "name=magedu state=absent"</span>
+192.168.7.113 | CHANGED =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">true</span>, 
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"magedu"</span>, 
+    <span class="hljs-string">"state"</span>: <span class="hljs-string">"absent"</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible nodes -a "tail /etc/group"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+input:x:999:
+systemd-journal:x:190:
+systemd-network:x:192:
+dbus:x:81:
+polkitd:x:998:
+ssh_keys:x:997:
+sshd:x:74:
+postdrop:x:90:
+postfix:x:89:
+apache:x:48:
+
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+18. 其他模块
+ansible 中模块众多， 使用模块前想想好自己的业务需要场景以及原生命令的使用细节，然后
+查询 ansible 是否有对应的功能模块，根据 ansible-doc 自己的需求找到对应的实现选项进
+进测试验证。不要刻意记忆具体选项，有使用经验和文档参考即可。
+</div></code></pre>
+
+</body>
+</html>

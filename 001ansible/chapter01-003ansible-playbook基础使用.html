@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>chapter01-003ansible-playbook基础使用.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h2 id="%E7%AC%AC%E4%B8%80%E7%AB%A0-ansible-%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7">第一章 ansible 自动化运维工具</h2>
+<h3 id="%E7%AC%AC%E4%B8%89%E8%8A%82-ansible-playbook-%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8">第三节 ansible playbook 基础使用</h3>
+<h4 id="131-centos76-%E4%B8%8B%E7%AE%80%E5%8D%95%E7%9A%84-ansible-playbook-%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B">1.3.1 CentOS7.6 下简单的 ansible playbook 使用案例 ( * )</h4>
+<pre class="hljs"><code><div>1. 准备一台 CentOS7.6 服务器，安装好 ansible，并配置一台被远程管理的服务器
+
+备操作远程服务器：
+
+[root@node01 ~]<span class="hljs-comment"># hostname</span>
+node01
+[root@node01 ~]<span class="hljs-comment"># </span>
+[root@node01 ~]<span class="hljs-comment"># getenforce </span>
+Disabled
+[root@node01 ~]<span class="hljs-comment"># </span>
+[root@node01 ~]<span class="hljs-comment"># iptables -vnL</span>
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+[root@node01 ~]<span class="hljs-comment"># </span>
+[root@node01 ~]<span class="hljs-comment"># </span>
+[root@node01 ~]<span class="hljs-comment"># ip a</span>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:a7:db:80 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.7.113/21 brd 192.168.7.255 scope global noprefixroute dynamic ens33
+       valid_lft 692679sec preferred_lft 692679sec
+    inet6 fe80::232b:c256:83db:c7a2/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+[root@node01 ~]<span class="hljs-comment"># </span>
+[root@node01 ~]<span class="hljs-comment">#</span>
+
+
+ansible 主机：
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># hostname</span>
+ansible
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># getenforce </span>
+Disabled
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># iptables -vnL</span>
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt <span class="hljs-keyword">in</span>     out     <span class="hljs-built_in">source</span>               destination         
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible --version</span>
+ansible 2.8.1
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u<span class="hljs-string">'/root/.ansible/plugins/modules'</span>, u<span class="hljs-string">'/usr/share/ansible/plugins/modules'</span>]
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.5 (default, Oct 30 2018, 23:45:53) [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)]
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># cat /etc/ansible/hosts </span>
+[nodes]
+192.168.7.113
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># ansible all -m ping </span>
+192.168.7.113 | SUCCESS =&gt; {
+    <span class="hljs-string">"ansible_facts"</span>: {
+        <span class="hljs-string">"discovered_interpreter_python"</span>: <span class="hljs-string">"/usr/bin/python"</span>
+    }, 
+    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>, 
+    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span>
+}
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+
+
+2. 我们在 ansible 主机上创建 /data/playbook 文件夹，编写一个简单的 playbook
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># mkdir -pv /data/playbook</span>
+mkdir: created directory ‘/data’
+mkdir: created directory ‘/data/playbook’
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># cd /data/playbook/</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># vi hello.yml</span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat hello.yml </span>
+- hosts: all
+  tasks:
+    - name: simple playbook <span class="hljs-built_in">test</span>
+      shell: /bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Hello Linux, Hello Magedu"</span> &gt; /root/hello.txt
+    
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible-playbook hello.yml </span>
+
+PLAY [all] *****************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************
+ok: [192.168.7.113]
+
+TASK [simple playbook <span class="hljs-built_in">test</span>] ************************************************************************************
+changed: [192.168.7.113]
+
+PLAY RECAP *****************************************************************************************************
+192.168.7.113              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible all -a "cat /root/hello.txt"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+Hello Linux, Hello Magedu
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+
+
+
+3. ansible-playbook 常用选项
+
+  3.1 --check -C 检查 playbook ，并非真正运行
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment"># ansible-playbook --check -C hello.yml </span>
+
+  PLAY [all] **********************************************************************************
+
+  TASK [Gathering Facts] **********************************************************************
+  ok: [192.168.7.113]
+
+  TASK [simple playbook <span class="hljs-built_in">test</span>] *****************************************************************
+  skipping: [192.168.7.113]
+
+  PLAY RECAP **********************************************************************************
+  192.168.7.113              : ok=1    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment">#</span>
+
+
+
+  3.2 --list-hosts 列出要操作的远程主机列表
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment"># ansible-playbook --list-hosts  hello.yml </span>
+
+  playbook: hello.yml
+
+    play <span class="hljs-comment">#1 (all): all	TAGS: []</span>
+      pattern: [u<span class="hljs-string">'all'</span>]
+      hosts (1):
+        192.168.7.113
+  [root@ansible playbook]<span class="hljs-comment">#</span>
+
+
+
+  3.3 --list-tasks 列出 playbook 中所有 tasks
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment"># ansible-playbook --list-tasks  hello.yml </span>
+
+  playbook: hello.yml
+
+    play <span class="hljs-comment">#1 (all): all	TAGS: []</span>
+      tasks:
+        simple playbook <span class="hljs-built_in">test</span>	TAGS: []
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment">#</span>
+
+
+
+  3.4 --<span class="hljs-built_in">limit</span> 指定要执行的主机列表
+  [root@ansible playbook]<span class="hljs-comment"># ansible-playbook --limit  192.168.7.113 hello.yml </span>
+
+  PLAY [all] **********************************************************************************
+
+  TASK [Gathering Facts] **********************************************************************
+  ok: [192.168.7.113]
+
+  TASK [simple playbook <span class="hljs-built_in">test</span>] *****************************************************************
+  changed: [192.168.7.113]
+
+  PLAY RECAP **********************************************************************************
+  192.168.7.113              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+  [root@ansible playbook]<span class="hljs-comment"># </span>
+  [root@ansible playbook]<span class="hljs-comment">#</span>
+</div></code></pre>
+<h4 id="132-%E4%BD%BF%E7%94%A8-ansible-playbook-%E5%AE%8C%E6%88%90-httpd-%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2">1.3.2 使用 ansible playbook 完成 httpd 服务的安装部署 ( * )</h4>
+<pre class="hljs"><code><div>1. 安装 httpd 服务，获取 httpd 的默认配置模板，准备 httpd 默认 index.html 页面
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># yum install httpd -y</span>
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.jdcloud.com
+ * epel: mirrors.yun-idc.com
+ * extras: mirror.jdcloud.com
+ * updates: mirror.jdcloud.com
+Package httpd-2.4.6-89.el7.centos.x86_64 already installed and latest version
+Nothing to <span class="hljs-keyword">do</span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cp /etc/httpd/conf/httpd.conf ./</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># vi httpd.conf </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd.conf | grep ServerName</span>
+<span class="hljs-comment"># ServerName gives the name and port that the server uses to identify itself.</span>
+ServerName www.magedu.io:80
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd.conf | grep Listen</span>
+<span class="hljs-comment"># Listen: Allows you to bind Apache to specific IP addresses and/or</span>
+<span class="hljs-comment"># Change this to Listen on specific IP addresses as shown below to </span>
+<span class="hljs-comment">#Listen 12.34.56.78:80</span>
+Listen 88
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># echo '&lt;h1&gt;welcome to  www.magedu.io !&lt;/h1&gt;' &gt; index.html</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ll</span>
+total 20
+-rw-r--r-- 1 root root 11750 Jul 21 15:43 httpd.conf
+-rw-r--r-- 1 root root    37 Jul 21 15:50 index.html
+[root@ansible playbook]
+
+2. 编写 httpd-install.yml playbook 脚本
+[root@ansible playbook]<span class="hljs-comment"># vi httpd-install.yml </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd-install.yml </span>
+---
+- hosts: all
+  remote_user: root
+  
+  tasks:
+    - name: install httpd 
+      yum: name=httpd
+
+    - name: config httpd serivce
+      copy: src=/data/playbook/httpd.conf dest=/etc/httpd/conf/httpd.conf
+
+    - name: copy default index.html
+      copy: src=/data/playbook/index.html dest=/usr/share/httpd/noindex/index.html
+
+    - name: manage httpd service
+      service: name=httpd state=started enabled=yes
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># ll</span>
+total 20
+-rw-r--r-- 1 root root 11750 Jul 21 15:43 httpd.conf
+-rw-r--r-- 1 root root   412 Jul 21 16:08 httpd-install.yml
+-rw-r--r-- 1 root root    37 Jul 21 15:50 index.html
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible-playbook httpd-install.yml </span>
+
+PLAY [all] *****************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************
+ok: [192.168.7.113]
+
+TASK [install httpd] *******************************************************************************************
+changed: [192.168.7.113]
+
+TASK [config httpd serivce] ************************************************************************************
+changed: [192.168.7.113]
+
+TASK [copy default index.html] *********************************************************************************
+changed: [192.168.7.113]
+
+TASK [manage httpd service] ************************************************************************************
+changed: [192.168.7.113]
+
+PLAY RECAP *****************************************************************************************************
+192.168.7.113              : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># curl 192.168.7.113:88</span>
+&lt;h1&gt;welcome to  www.magedu.io !&lt;/h1&gt;
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+访问成功！
+
+
+3. 编写 notify 和 handlers 实现修改配置文件后触发 httpd 服务重启
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># vi httpd-install.yml </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd-install.yml </span>
+---
+- hosts: all
+  remote_user: root
+  
+  tasks:
+    - name: install httpd 
+      yum: name=httpd
+
+    - name: config httpd serivce
+      copy: src=/data/playbook/httpd.conf dest=/etc/httpd/conf/httpd.conf
+      notify: restart httpd service
+
+    - name: copy default index.html
+      copy: src=/data/playbook/index.html dest=/usr/share/httpd/noindex/index.html
+
+    - name: manage httpd service
+      service: name=httpd state=started enabled=yes
+
+  handlers:
+    - name: restart httpd service
+      service: name=httpd state=restarted
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># vi httpd.conf </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd.conf | grep Listen</span>
+<span class="hljs-comment"># Listen: Allows you to bind Apache to specific IP addresses and/or</span>
+<span class="hljs-comment"># Change this to Listen on specific IP addresses as shown below to </span>
+<span class="hljs-comment">#Listen 12.34.56.78:80</span>
+Listen 80
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible-playbook httpd-install.yml </span>
+
+PLAY [all] *****************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************
+ok: [192.168.7.113]
+
+TASK [install httpd] *******************************************************************************************
+ok: [192.168.7.113]
+
+TASK [config httpd serivce] ************************************************************************************
+changed: [192.168.7.113]
+
+TASK [copy default index.html] *********************************************************************************
+ok: [192.168.7.113]
+
+TASK [manage httpd service] ************************************************************************************
+ok: [192.168.7.113]
+
+RUNNING HANDLER [restart httpd service] ************************************************************************
+changed: [192.168.7.113]
+
+PLAY RECAP *****************************************************************************************************
+192.168.7.113              : ok=6    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># curl 192.168.7.113:88</span>
+curl: (7) Failed connect to 192.168.7.113:88; Connection refused
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># curl 192.168.7.113:80</span>
+&lt;h1&gt;welcome to  www.magedu.io !&lt;/h1&gt;
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+
+
+4. 给指定的 tasks 打标签，方便单独调用
+我们修改之前的 httpd-install.yml 
+[root@ansible playbook]<span class="hljs-comment"># vi httpd-install.yml</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd-install.yml </span>
+---
+- hosts: all
+  remote_user: root
+  
+  tasks:
+    - name: install httpd 
+      yum: name=httpd
+
+    - name: config httpd serivce
+      copy: src=/data/playbook/httpd.conf dest=/etc/httpd/conf/httpd.conf
+      notify: restart httpd service
+      tags: config
+
+    - name: copy default index.html
+      copy: src=/data/playbook/index.html dest=/usr/share/httpd/noindex/index.html
+
+    - name: manage httpd service
+      service: name=httpd state=started enabled=yes
+
+  handlers:
+    - name: restart httpd service
+      service: name=httpd state=restarted
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+
+修改一下配置文件:
+[root@ansible playbook]<span class="hljs-comment"># vi httpd.conf </span>
+[root@ansible playbook]<span class="hljs-comment">#  </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat httpd.conf | grep Listen</span>
+<span class="hljs-comment"># Listen: Allows you to bind Apache to specific IP addresses and/or</span>
+<span class="hljs-comment"># Change this to Listen on specific IP addresses as shown below to </span>
+<span class="hljs-comment">#Listen 12.34.56.78:80</span>
+Listen 99
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+
+使用 ansible-playbook --list-tags 列出 playbook 中的所有 tags
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible-playbook --list-tags httpd-install.yml </span>
+
+playbook: httpd-install.yml
+
+  play <span class="hljs-comment">#1 (all): all	TAGS: []</span>
+      TASK TAGS: [config]
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+
+使用 ansible-playbook 仅执行指定的 tags 任务：
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible-playbook -t config httpd-install.yml </span>
+
+PLAY [all] *****************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************
+ok: [192.168.7.113]
+
+TASK [config httpd serivce] ************************************************************************************************************
+changed: [192.168.7.113]
+
+RUNNING HANDLER [restart httpd service] ************************************************************************************************
+changed: [192.168.7.113]
+
+PLAY RECAP *****************************************************************************************************************************
+192.168.7.113              : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible all -a "ss -ntlp"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              
+LISTEN     0      128          *:22                       *:*                   users:((<span class="hljs-string">"sshd"</span>,pid=6654,fd=3))
+LISTEN     0      100    127.0.0.1:25                       *:*                   users:((<span class="hljs-string">"master"</span>,pid=6796,fd=13))
+LISTEN     0      128         :::22                      :::*                   users:((<span class="hljs-string">"sshd"</span>,pid=6654,fd=4))
+LISTEN     0      100        ::1:25                      :::*                   users:((<span class="hljs-string">"master"</span>,pid=6796,fd=14))
+LISTEN     0      128         :::99                      :::*                   users:((<span class="hljs-string">"httpd"</span>,pid=13489,fd=4),(<span class="hljs-string">"httpd"</span>,pid=13488,fd=4),(<span class="hljs-string">"httpd"</span>,pid=13487,fd=4),(<span class="hljs-string">"httpd"</span>,pid=13486,fd=4),(<span class="hljs-string">"httpd"</span>,pid=13485,fd=4),(<span class="hljs-string">"httpd"</span>,pid=13484,fd=4))
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+</div></code></pre>
+<h4 id="133-%E4%BD%BF%E7%94%A8-ansible-playbook-%E5%AE%8C%E6%88%90-mariadb10225-%E7%9A%84%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2">1.3.3 使用 ansible playbook 完成 mariadb10.2.25 的安装部署 ( * )</h4>
+<pre class="hljs"><code><div>1.我们在上一个实验的环境下，继续进行 mariadb 服务的安装工作
+[root@ansible ~]<span class="hljs-comment"># rm -rf /data/playbook/</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># mkdir -pv /data/playbook</span>
+mkdir: created directory ‘/data/playbook’
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment">#</span>
+[root@ansible ~]<span class="hljs-comment"># </span>
+[root@ansible ~]<span class="hljs-comment"># cd /data/playbook/</span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+
+上传 mariadb10.2.25 的二进制软件包
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ll</span>
+total 447224
+-rw-r--r-- 1 root root 457955398 Jul 21 16:32 mariadb-10.2.25-linux-x86_64.tar.gz
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># vi my.cnf </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat my.cnf </span>
+<span class="hljs-comment"># The following options will be passed to all MySQL clients</span>
+[client]
+port		= 3306
+socket		= /tmp/mysql.sock
+
+<span class="hljs-comment"># The MySQL server</span>
+[mysqld]
+datadir=/data/mysql
+port		= 3306
+socket		= /tmp/mysql.sock
+skip-external-locking
+key_buffer_size = 384M
+max_allowed_packet = 1M
+table_open_cache = 512
+sort_buffer_size = 2M
+read_buffer_size = 2M
+read_rnd_buffer_size = 8M
+myisam_sort_buffer_size = 64M
+thread_cache_size = 8
+query_cache_size = 32M
+thread_concurrency = 8
+
+<span class="hljs-comment"># Point the following paths to a dedicated disk</span>
+<span class="hljs-comment">#tmpdir		= /tmp/</span>
+
+<span class="hljs-comment"># binary logging is required for replication</span>
+<span class="hljs-built_in">log</span>-bin=mysql-bin
+
+server-id	= 1
+
+[mysqldump]
+quick
+max_allowed_packet = 16M
+
+[mysql]
+no-auto-rehash
+
+[myisamchk]
+key_buffer_size = 256M
+sort_buffer_size = 256M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment">#</span>
+[root@ansible playbook]<span class="hljs-comment"># vi mariadb10.2.25-install.yml </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># cat mariadb10.2.25-install.yml </span>
+---
+- hosts: all
+  remote_user: root
+
+  tasks:
+    - name: create mysql user at remote server
+      user: name=mysql system=yes home=/data/mysql create_home=no shell=/sbin/nologin
+
+    - name: unarchive mariadb binary package
+      unarchive: src=/data/playbook/mariadb-10.2.25-linux-x86_64.tar.gz dest=/usr/<span class="hljs-built_in">local</span>/ owner=root group=root
+
+    - name: create symbolic <span class="hljs-keyword">for</span> mariadb
+      file: src=/usr/<span class="hljs-built_in">local</span>/mariadb-10.2.25-linux-x86_64 dest=/usr/<span class="hljs-built_in">local</span>/mysql state=link
+
+    - name: create mariadb datadir
+      file: path=/data/mysql state=directory
+
+    - name: change mariadb file owner
+      file: path=/data/mysql owner=mysql group=mysql
+
+    - name: init mariadb base data
+      shell: <span class="hljs-built_in">chdir</span>=/usr/<span class="hljs-built_in">local</span>/mysql/ scripts/mysql_install_db --datadir=/data/mysql --user=mysql
+
+    - name: define PATH <span class="hljs-keyword">for</span> mariadb
+      copy: content=<span class="hljs-string">'PATH=/usr/local/mysql/bin:$PATH'</span> dest=/etc/profile.d/mariadb.sh
+
+    - name: copy default cofigure file <span class="hljs-keyword">for</span> mariadb
+      copy: src=/data/playbook/my.cnf dest=/etc/my.cnf
+
+    - name: copy service manage script
+      shell: cp /usr/<span class="hljs-built_in">local</span>/mysql/support-files/mysql.server /etc/init.d/mysqld
+
+    - name: start mariadb service 
+      shell: /etc/init.d/mysqld start
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible-playbook mariadb10.2.25-install.yml </span>
+
+PLAY [all] ********************************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************
+ok: [192.168.7.113]
+
+TASK [create mysql user at remote server] *************************************************************************
+ok: [192.168.7.113]
+
+TASK [unarchive mariadb binary package] ***************************************************************************
+changed: [192.168.7.113]
+
+TASK [create symbolic <span class="hljs-keyword">for</span> mariadb] ********************************************************************************
+changed: [192.168.7.113]
+
+TASK [create mariadb datadir] *************************************************************************************
+changed: [192.168.7.113]
+
+TASK [change mariadb file owner] **********************************************************************************
+changed: [192.168.7.113]
+
+TASK [init mariadb base data] *************************************************************************************
+changed: [192.168.7.113]
+
+TASK [define PATH <span class="hljs-keyword">for</span> mariadb] ************************************************************************************
+ok: [192.168.7.113]
+
+TASK [copy default cofigure file <span class="hljs-keyword">for</span> mariadb] *********************************************************************
+changed: [192.168.7.113]
+
+TASK [copy service manage script] *********************************************************************************
+changed: [192.168.7.113]
+
+TASK [start mariadb service] **************************************************************************************
+changed: [192.168.7.113]
+
+PLAY RECAP ********************************************************************************************************
+192.168.7.113              : ok=11   changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># </span>
+[root@ansible playbook]<span class="hljs-comment"># ansible all -a "ss -ntlp"</span>
+192.168.7.113 | CHANGED | rc=0 &gt;&gt;
+State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              
+LISTEN     0      128          *:22                       *:*                   users:((<span class="hljs-string">"sshd"</span>,pid=6654,fd=3))
+LISTEN     0      100    127.0.0.1:25                       *:*                   users:((<span class="hljs-string">"master"</span>,pid=6796,fd=13))
+LISTEN     0      80          :::3306                    :::*                   users:((<span class="hljs-string">"mysqld"</span>,pid=12640,fd=21))
+LISTEN     0      128         :::22                      :::*                   users:((<span class="hljs-string">"sshd"</span>,pid=6654,fd=4))
+LISTEN     0      100        ::1:25                      :::*                   users:((<span class="hljs-string">"master"</span>,pid=6796,fd=14))
+
+[root@ansible playbook]<span class="hljs-comment">#</span>
+
+</div></code></pre>
+
+</body>
+</html>
